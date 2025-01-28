@@ -99,9 +99,10 @@ function resetGame() {
     moveCounter.textContent = 0; // Reset move counter
     flippedCards = []; // Reset flipped cards array
     matchedPairs = 0; // Reset matched pairs counter
-    currentSkin = 0; // Reset card skin
+    // currentSkin = 0; // Reset card skin
     timerSeconds = 0; // Reset timer
     createCards(); // Create new cards
+    changeSkin(); // Change card skin
     stopTimer();  // Stop timer
     startTimer(); // Start timer
   }
@@ -170,21 +171,25 @@ function switchMode(mode) {
       selected_cards_set = cards;
       selected_cards_pair = cardPairs;
       cardContainer.innerHTML = '';
+      changeSkin()
       break;
     case 'hard':
       selected_cards_set = hardCards;
       selected_cards_pair = hardCardPairs;
       cardContainer.innerHTML = '';
+      changeSkin()
       break;
     case 'test':
       selected_cards_set = testCards;
       selected_cards_pair = testCardPairs;
       cardContainer.innerHTML = '';
+      changeSkin()
       break;
     default:
       selected_cards_set = cards;
       selected_cards_pair = cardPairs;
       cardContainer.innerHTML = '';
+      changeSkin()
   }
 
   const shuffledCards = shuffleArray(selected_cards_pair); // Shuffle the cards
@@ -210,4 +215,5 @@ testModeButton.addEventListener('click', () => switchMode('test'));
 
 // Initialize game
 createCards();
+changeSkin();
 startTimer();
