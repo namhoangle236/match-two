@@ -12,7 +12,11 @@
     <header class="header">
         <h1>Memory Game</h1>
         <div class="game-info">
-            <button class="hard-mode">HARD MODE</button>
+            <select name="mode" id="mode">
+                <option class="easy-mode" value="easy" selected>EASY</option>   <!-- Default mode is easy -->
+                <option class="hard-mode" value="hard">HARD</option>
+                <option class="test-mode" value="test">TEST</option>
+              </select> 
             <button class="restart">Restart</button>
             <button class="card-skin">Change skin</button>
             Moves: <span class="moves">0</span>

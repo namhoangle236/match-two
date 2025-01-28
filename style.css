@@ -35,6 +35,12 @@ button {
     cursor: pointer;
 }
 
+select {
+    padding: 5px 10px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
 /* card container styling */
 .card-container {
     display: grid;

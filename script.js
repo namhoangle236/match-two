@@ -7,12 +7,16 @@ const cardContainer = document.querySelector('.card-container');
 // create array of cards
 const cards = ['👽', '👹', '🤑', '🙌', '😭', '🧙', '👀', '💩'];
 const hardCards = ['👽', '👹', '🤑', '🙌', '😭', '🧙', '👀', '💩', '👾', '😍', '🤬', '💋'];
+const testCards = ['👽', '👹'];
 
 let selected_cards_set = cards; // default card set
 
 // duplicate the cards array
 const cardPairs = [...cards, ...cards]; // ES6 spread operator boi! Makes life easier
 const hardCardPairs = [...hardCards, ...hardCards];
+const testCardPairs = [...testCards, ...testCards];
+
+let selected_cards_pair = cardPairs; // default card pair set
 
 // empty array to store flipped cards, and counter for matched pairs
 let flippedCards = [];
@@ -28,6 +32,7 @@ moveCounter = document.querySelector('.moves');
 // Audio
 const flip_audio = new Audio('assets/card-flip-SE.mp3');
 const win_audio = new Audio('assets/victory-SE.mp3');
+const match_audio = new Audio('assets/match-SE.mp3');
 
 
 // ==================================================== GAME LOGIC ========================================================== //
@@ -35,7 +40,8 @@ const win_audio = new Audio('assets/victory-SE.mp3');
 
 // Create and display cards
 function createCards() {
-  const shuffledCards = shuffleArray(cardPairs); // shuffle here so it resets every time createCards() is called
+  cardContainer.innerHTML = '';
+  const shuffledCards = shuffleArray(selected_cards_pair); // shuffle here so it resets every time createCards() is called
   shuffledCards.forEach((card) => {
     const li = document.createElement('li');
     li.classList.add('card');
@@ -72,7 +78,9 @@ function checkMatch() {
     card1.classList.add('matched');                 /* same old class adding stuff */
     card2.classList.add('matched');
     matchedPairs++;                                 /* increase matchedPairs counter for win condition check*/                     
+    match_audio.play();                             /* play match audio when cards are matched */
     if (matchedPairs === selected_cards_set.length) {
+      stopTimer();                                  /* stop timer when win*/
       win_audio.play();                             /* play win audio when all cards are matched */
       alert('You Win!');
     }
@@ -88,11 +96,14 @@ function checkMatch() {
 // Restart game
 function resetGame() {
     cardContainer.innerHTML = ''; // Clear all cards
-    createCards(); // Create new cards
     moveCounter.textContent = 0; // Reset move counter
+    flippedCards = []; // Reset flipped cards array
     matchedPairs = 0; // Reset matched pairs counter
     currentSkin = 0; // Reset card skin
     timerSeconds = 0; // Reset timer
+    createCards(); // Create new cards
+    stopTimer();  // Stop timer
+    startTimer(); // Start timer
   }
   
   // Attach an event listener to the reset button
@@ -134,33 +145,68 @@ changeSkinButton.addEventListener('click', changeSkin);
 // ------------------- Timer Display ------------------- //
 
 let timerSeconds = 0;           // Leave this outside of startTimer() so it can be accessed globally for resetting
+let timerInterval;              // Leave this outside of startTimer() so it can be accessed globally for stopping
 
 // Function to start the timer
 function startTimer() {
-    let timerInterval;  
     timerInterval = setInterval(() => {     // JS setInterval() takes in 2 arguments: a function to be executed, and a time in milliseconds to repeat that function
     timerSeconds++;
     document.querySelector('.timer').textContent = timerSeconds;
   }, 1000); // Update every 1 second
 }
 
-// ------------------- HARD MODE ------------------- //
-function hardMode() {
-    selected_cards_set = hardCards; // change card set to hard mode, don't use 'let' here or it will create a new variable and not update the global one
-    cardContainer.innerHTML = ''; // Clear all cards
-    const shuffledCards = shuffleArray(hardCardPairs); // shuffle here so it resets every time createCards() is called
-    shuffledCards.forEach((card) => {
-      const li = document.createElement('li');
-      li.classList.add('card');
-      li.textContent = card;
-      li.addEventListener('click', flipCard); // execute flipcard() when clicked
-      cardContainer.appendChild(li);
-    });
+// Function to stop the timer -----> make sure to stop before start, or it will double/triple count
+function stopTimer() {
+    clearInterval(timerInterval); // clearInterval() stops the timer
 }
 
-// Attach an event listener to hard mode button
+// ------------------- DIFFICULTY ------------------- //
+function switchMode(mode) {
+  //cardContainer.innerHTML = ''; // Clear all cards
+  resetGame(); // Reset game
+
+  switch (mode) {
+    case 'easy':
+      selected_cards_set = cards;
+      selected_cards_pair = cardPairs;
+      cardContainer.innerHTML = '';
+      break;
+    case 'hard':
+      selected_cards_set = hardCards;
+      selected_cards_pair = hardCardPairs;
+      cardContainer.innerHTML = '';
+      break;
+    case 'test':
+      selected_cards_set = testCards;
+      selected_cards_pair = testCardPairs;
+      cardContainer.innerHTML = '';
+      break;
+    default:
+      selected_cards_set = cards;
+      selected_cards_pair = cardPairs;
+      cardContainer.innerHTML = '';
+  }
+
+  const shuffledCards = shuffleArray(selected_cards_pair); // Shuffle the cards
+  shuffledCards.forEach((card) => {
+    const li = document.createElement('li');
+    li.classList.add('card');
+    li.textContent = card;
+    li.addEventListener('click', flipCard); // Execute flipCard() when clicked
+    cardContainer.appendChild(li);
+  });
+}
+
+
+// Attach event listeners to mode buttons
 const hardModeButton = document.querySelector('.hard-mode');
-hardModeButton.addEventListener('click', hardMode);
+hardModeButton.addEventListener('click', () => switchMode('hard'));
+
+const easyModeButton = document.querySelector('.easy-mode');
+easyModeButton.addEventListener('click', () => switchMode('easy'));
+
+const testModeButton = document.querySelector('.test-mode');
+testModeButton.addEventListener('click', () => switchMode('test'));
 
 // Initialize game
 createCards();
