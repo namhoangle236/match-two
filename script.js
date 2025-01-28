@@ -26,8 +26,8 @@ const shuffleArray = (arr) => arr.sort(() => Math.random() - 0.5); // ES6 arrow 
 moveCounter = document.querySelector('.moves');
 
 // Audio
-const flip_audio = new Audio('/assets/card-flip-SE.mp3');
-const win_audio = new Audio('/assets/victory-SE.mp3');
+const flip_audio = new Audio('assets/card-flip-SE.mp3');
+const win_audio = new Audio('assets/victory-SE.mp3');
 
 
 // ==================================================== GAME LOGIC ========================================================== //
