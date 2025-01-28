@@ -171,25 +171,21 @@ function switchMode(mode) {
       selected_cards_set = cards;
       selected_cards_pair = cardPairs;
       cardContainer.innerHTML = '';
-      changeSkin()
       break;
     case 'hard':
       selected_cards_set = hardCards;
       selected_cards_pair = hardCardPairs;
       cardContainer.innerHTML = '';
-      changeSkin()
       break;
     case 'test':
       selected_cards_set = testCards;
       selected_cards_pair = testCardPairs;
       cardContainer.innerHTML = '';
-      changeSkin()
       break;
     default:
       selected_cards_set = cards;
       selected_cards_pair = cardPairs;
       cardContainer.innerHTML = '';
-      changeSkin()
   }
 
   const shuffledCards = shuffleArray(selected_cards_pair); // Shuffle the cards
@@ -200,6 +196,8 @@ function switchMode(mode) {
     li.addEventListener('click', flipCard); // Execute flipCard() when clicked
     cardContainer.appendChild(li);
   });
+
+  changeSkin(); // Change card skin
 }
 
 
