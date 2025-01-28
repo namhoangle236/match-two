@@ -106,7 +106,7 @@ function resetGame() {
 // ----------------------- Change card skin ----------------------- //
 
 //-- https://cassidoo.co/post/styling-css-pseudo/ -- Trick to edit pseudo elements
-const cardSkins = ['assets/card-back-1.png', 'assets/card-back-2.png', 'assets/card-back-3.gif', 'assets/card-back-4.gif', 'assets/card-back-5.png',
+const cardSkins = ['⏹️', 'assets/card-back-2.png', 'assets/card-back-3.gif', 'assets/card-back-4.gif', 'assets/card-back-5.png',
     'assets/card-back-6.gif', 'assets/card-back-7.png', 'assets/card-back-8.png', 'assets/card-back-9.png', 'assets/card-back-10.png',
     'assets/card-back-11.png', 'assets/card-back-12.png', 'assets/card-back-13.png', 'assets/card-back-14.png', 'assets/card-back-15.gif'
 ];
