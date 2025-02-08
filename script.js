@@ -26,8 +26,15 @@ let matchedPairs = 0;
 const shuffleArray = (arr) => arr.sort(() => Math.random() - 0.5); // ES6 arrow func inside arrow func
 // shuffleArray takes in (arr), return the sorted array, with the sort criteria based on another func
 
+
+
 // counter for moves 
 moveCounter = document.querySelector('.moves');
+
+// counter for moves across all instances
+totalMoveCounter = document.querySelector('.total-moves');
+
+
 
 // Audio
 const flip_audio = new Audio('assets/card-flip-SE.mp3');
@@ -62,6 +69,11 @@ function flipCard() {
     if (flippedCards.length === 2) {
       // Update move counter  
       moveCounter.textContent = parseInt(moveCounter.textContent) + 1; 
+      saveMoveCounter(); // Save move counter to sessionStorage
+
+      // totalMoveCounter.textContent = parseInt(totalMoveCounter.textContent) + 1;                     // DON'T DO THIS! this relies on the current totalMoveCounter of a single tab, which is not accurate
+      totalMoveCounter.textContent = parseInt(localStorage.getItem('totalMoveCounter') || 0) + 1;       // use the number from local storage, or 0 if it doesn't exist, takes in consideration of all tabs
+      saveTotalMoveCounter(); // Save total move counter to sessionStorage
 
       // Wait 0.5s before running checkMatch(), in turn, give a short delay to flip both cards back down  
       setTimeout(checkMatch, 500); 
@@ -96,7 +108,7 @@ function checkMatch() {
 // Restart game
 function resetGame() {
     cardContainer.innerHTML = ''; // Clear all cards
-    moveCounter.textContent = 0; // Reset move counter
+    moveCounter.textContent = 0; // Reset move counter (for this game instance)
     flippedCards = []; // Reset flipped cards array
     matchedPairs = 0; // Reset matched pairs counter
     // currentSkin = 0; // Reset card skin
@@ -211,7 +223,51 @@ easyModeButton.addEventListener('click', () => switchMode('easy'));
 const testModeButton = document.querySelector('.test-mode');
 testModeButton.addEventListener('click', () => switchMode('test'));
 
+
+// // ==================================================== SAVE and LOAD ==================================================== //
+
+
+// Load move counter from sessionStorage on page load
+function loadMoveCounter() {
+  const savedMoveCounter = sessionStorage.getItem('moveCounter');
+  if (savedMoveCounter !== null) {
+    moveCounter.textContent = savedMoveCounter; // Restore the saved move counter
+  }
+}
+
+// Save move counter to sessionStorage with the name 'moveCounter'
+function saveMoveCounter() {
+  sessionStorage.setItem('moveCounter', moveCounter.textContent);
+}
+
+// ====================================================================================
+
+// Load total move counter from localStorage on page load
+function loadTotalMoveCounter() {
+  const savedTotalMoveCounter = localStorage.getItem('totalMoveCounter');
+  if (savedTotalMoveCounter !== null) {
+    totalMoveCounter.textContent = savedTotalMoveCounter; // Restore the saved move counter
+  }
+}
+
+// save total move counter to localStorage
+function saveTotalMoveCounter() {
+  localStorage.setItem('totalMoveCounter', totalMoveCounter.textContent);
+}
+
+
+
+// ================  Load saves when the page loads
+window.addEventListener('load', loadMoveCounter);
+window.addEventListener('load', loadTotalMoveCounter);
+
+// ==================================================== GAME INITIALIZATION ==================================================== //
+
 // Initialize game
 createCards();
 changeSkin();
 startTimer();
+
+
+
+
