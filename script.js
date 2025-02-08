@@ -162,15 +162,16 @@ let timerInterval;              // Leave this outside of startTimer() so it can 
 
 // Function to start the timer
 function startTimer() {
-    timerInterval = setInterval(() => {     // JS setInterval() takes in 2 arguments: a function to be executed, and a time in milliseconds to repeat that function
+    timerInterval = setInterval(() => {                           // JS setInterval() takes in 2 arguments: a function to be executed, and a time in milliseconds to repeat that function
     timerSeconds++;
     document.querySelector('.timer').textContent = timerSeconds;
-  }, 1000); // Update every 1 second
+    saveTimer();                                                  // Save the updated timer value to sessionStorage
+  }, 1000);                                                       // Update every 1 second
 }
 
 // Function to stop the timer -----> make sure to stop before start, or it will double/triple count
 function stopTimer() {
-    clearInterval(timerInterval); // clearInterval() stops the timer
+    clearInterval(timerInterval);                                 // clearInterval() stops the timer
 }
 
 // ------------------- DIFFICULTY ------------------- //
@@ -256,10 +257,28 @@ function saveTotalMoveCounter() {
 }
 
 
+// ====================================================================================
 
-// ================  Load saves when the page loads
+// load timer from sessionStorage on page load
+function loadTimer() {
+  const savedTimer = sessionStorage.getItem('timerSeconds');
+  if (savedTimer !== null) {
+    timerSeconds = parseInt(savedTimer);
+    document.querySelector('.timer').textContent = timerSeconds;
+  }
+}
+
+// save timer to sessionStorage
+function saveTimer() {
+  sessionStorage.setItem('timerSeconds', timerSeconds);
+}
+
+
+
+// ================  Load saves when the page loads =================== //
 window.addEventListener('load', loadMoveCounter);
 window.addEventListener('load', loadTotalMoveCounter);
+window.addEventListener('load', loadTimer);
 
 // ==================================================== GAME INITIALIZATION ==================================================== //
 
