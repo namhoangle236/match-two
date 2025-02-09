@@ -91,6 +91,9 @@ function checkMatch() {
     card2.classList.add('matched');
     matchedPairs++;                                 /* increase matchedPairs counter for win condition check*/                     
     match_audio.play();                             /* play match audio when cards are matched */
+    saveMatchedCards();                             // Save matched cards to sessionStorage
+
+
     if (matchedPairs === selected_cards_set.length) {
       stopTimer();                                  /* stop timer when win*/
       win_audio.play();                             /* play win audio when all cards are matched */
@@ -113,10 +116,11 @@ function resetGame() {
     matchedPairs = 0; // Reset matched pairs counter
     // currentSkin = 0; // Reset card skin
     timerSeconds = 0; // Reset timer
+    sessionStorage.removeItem('matchedCards'); // Clear matched cards from sessionStorage
     createCards(); // Create new cards
     changeSkin(); // Change card skin
     stopTimer();  // Stop timer
-    startTimer(); // Start timer
+    startTimer(); // Start timer  
   }
   
   // Attach an event listener to the reset button
@@ -225,7 +229,9 @@ const testModeButton = document.querySelector('.test-mode');
 testModeButton.addEventListener('click', () => switchMode('test'));
 
 
-// // ==================================================== SAVE and LOAD ==================================================== //
+
+
+// // ================================================================================= SAVE and LOAD ================================================================================ //
 
 
 // Load move counter from sessionStorage on page load
@@ -274,11 +280,43 @@ function saveTimer() {
 }
 
 
+// ====================================================================================
+
+// Save matched cards to sessionStorage
+function saveMatchedCards() {
+  // Select all elements with the 'matched' class and convert the NodeList to an array
+  const matchedCards = Array.from(document.querySelectorAll('.matched'))
+    .map(card => {
+      return card.textContent; // Extract and store each card's text content
+    });
+
+  // Save the matched cards array as a JSON string in sessionStorage
+  sessionStorage.setItem('matchedCards', JSON.stringify(matchedCards));
+}
+
+// Load matched cards from sessionStorage
+function loadMatchedCards() {
+  // Retrieve the matched cards from sessionStorage and parse the JSON string
+  const savedMatchedCards = JSON.parse(sessionStorage.getItem('matchedCards')) || [];
+
+  // Select all elements with the 'card' class
+  const allCards = document.querySelectorAll('.card');
+
+  // Loop through each card to check if its text content is in the saved matched cards
+  allCards.forEach(card => {
+    if (savedMatchedCards.includes(card.textContent)) {
+      card.classList.add('matched'); // Reapply the 'matched' class
+      card.classList.add('flipped'); // Reapply the 'flipped' class
+    }
+  });
+}
+
 
 // ================  Load saves when the page loads =================== //
 window.addEventListener('load', loadMoveCounter);
 window.addEventListener('load', loadTotalMoveCounter);
 window.addEventListener('load', loadTimer);
+window.addEventListener('load', loadMatchedCards);
 
 // ==================================================== GAME INITIALIZATION ==================================================== //
 
