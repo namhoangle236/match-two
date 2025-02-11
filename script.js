@@ -1,5 +1,14 @@
+// Code navigation
+//----  section: -----
+// 1. Setup variables
+// 2. Game logic
+// 3. Other game features
+// 4. Save and load
+// 5. Game initialization
 
-// ================================================= SETUP VARIABLES ==================================================== //
+
+
+// ================================================================ SETUP VARIABLES =================================================================== //
 
 // select card-container elements
 const cardContainer = document.querySelector('.card-container');
@@ -42,7 +51,7 @@ const win_audio = new Audio('assets/victory-SE.mp3');
 const match_audio = new Audio('assets/match-SE.mp3');
 
 
-// ==================================================== GAME LOGIC ========================================================== //
+// ================================================================ GAME LOGIC ====================================================================== //
 
 
 // Create and display cards
@@ -56,6 +65,9 @@ function createCards() {
     li.addEventListener('click', flipCard); // execute flipcard() when clicked
     cardContainer.appendChild(li);
   });
+
+  loadCardPositions(); // Load card positions from sessionStorage
+  saveCardPositions(); // Save card positions to sessionStorage
 }
 
 
@@ -92,7 +104,7 @@ function checkMatch() {
     matchedPairs++;                                 /* increase matchedPairs counter for win condition check*/                     
     match_audio.play();                             /* play match audio when cards are matched */
     saveMatchedCards();                             // Save matched cards to sessionStorage
-
+    saveMatchedPairsCounter();                      // Save matched pairs counter to sessionStorage
 
     if (matchedPairs === selected_cards_set.length) {
       stopTimer();                                  /* stop timer when win*/
@@ -116,7 +128,10 @@ function resetGame() {
     matchedPairs = 0; // Reset matched pairs counter
     // currentSkin = 0; // Reset card skin
     timerSeconds = 0; // Reset timer
+
     sessionStorage.removeItem('matchedCards'); // Clear matched cards from sessionStorage
+    sessionStorage.removeItem('cardOrder'); // Clear card positions from sessionStorage
+    
     createCards(); // Create new cards
     changeSkin(); // Change card skin
     stopTimer();  // Stop timer
@@ -128,7 +143,7 @@ function resetGame() {
   resetButton.addEventListener('click', resetGame);
 
 
-// =================================================== Other game features ================================================= //
+// ============================================================ Other game features ================================================================ //
 
 
 // ----------------------- Change card skin ----------------------- //
@@ -231,7 +246,7 @@ testModeButton.addEventListener('click', () => switchMode('test'));
 
 
 
-// // ================================================================================= SAVE and LOAD ================================================================================ //
+// // =================================================================== SAVE and LOAD =============================================================== //
 
 
 // Load move counter from sessionStorage on page load
@@ -294,6 +309,7 @@ function saveMatchedCards() {
   sessionStorage.setItem('matchedCards', JSON.stringify(matchedCards));
 }
 
+
 // Load matched cards from sessionStorage
 function loadMatchedCards() {
   // Retrieve the matched cards from sessionStorage and parse the JSON string
@@ -311,17 +327,61 @@ function loadMatchedCards() {
   });
 }
 
+// ====================================================================================
+
+// Save matched cards counter to sessionStorage
+function saveMatchedPairsCounter() {
+  sessionStorage.setItem('matchedPairsCounter', matchedPairs);
+}
+
+
+// Load matched cards counter from sessionStorage
+function loadMatchedPairsCounter() {
+  const savedMatchedPairsCounter = sessionStorage.getItem('matchedPairsCounter');
+
+  if (savedMatchedPairsCounter) {
+    matchedPairs = parseInt(savedMatchedPairsCounter);
+  }
+}
+
+// ====================================================================================
+
+// Save card positions to sessionStorage
+function saveCardPositions() {
+  const cardOrder = Array.from(cardContainer.children).map(card => card.textContent);
+  sessionStorage.setItem('cardOrder', JSON.stringify(cardOrder));
+}
+
+
+// Load card positions from sessionStorage
+function loadCardPositions() {
+  const savedCardOrder = JSON.parse(sessionStorage.getItem('cardOrder'));
+
+  if (savedCardOrder) {
+    cardContainer.innerHTML = ''; // Clear the container
+    savedCardOrder.forEach(cardContent => {
+      const li = document.createElement('li');
+      li.classList.add('card');
+      li.textContent = cardContent;
+      li.addEventListener('click', flipCard);
+      cardContainer.appendChild(li);
+    });
+  }
+}
 
 // ================  Load saves when the page loads =================== //
 window.addEventListener('load', loadMoveCounter);
 window.addEventListener('load', loadTotalMoveCounter);
 window.addEventListener('load', loadTimer);
+window.addEventListener('load', loadMatchedPairsCounter);
+window.addEventListener('load', loadCardPositions);   // load position before loadMatchedCards
 window.addEventListener('load', loadMatchedCards);
 
-// ==================================================== GAME INITIALIZATION ==================================================== //
+
+// =============================================================== GAME INITIALIZATION ============================================================= //
 
 // Initialize game
-createCards();
+createCards();      // createCards() also calls loadCardPositions() and saveCardPositions()
 changeSkin();
 startTimer();
 
